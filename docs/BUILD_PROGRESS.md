@@ -1,8 +1,8 @@
 # Chef OS Build Progress
 
 ## Current Gate Status
-- **Current Active Gate:** `G12 — Window Management & Dynamic Tiling Engine`
-- **Previous Gate:** `G11 — Native Compositor & Display Engine` (STATUS: **GREEN**)
+- **Current Active Gate:** `G15 — Native Audio Architecture & Sound Server`
+- **Previous Gate:** `G14 — Chef Cream Design System Implementation` (STATUS: **GREEN**)
 - **Overall Project Status:** IN PROGRESS
 
 ---

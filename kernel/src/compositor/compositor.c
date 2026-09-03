@@ -1,6 +1,7 @@
 #include "compositor/compositor.h"
+#include "compositor/layout.h"
+#include "compositor/shell_ui.h"
 #include "video/fb.h"
-#include "drivers/rtc.h"
 #include "string.h"
 #include "kprintf.h"
 
@@ -16,6 +17,9 @@ void compositor_init(void) {
     s_comp.mouse_x = s_comp.screen_width / 2;
     s_comp.mouse_y = s_comp.screen_height / 2;
     s_comp.needs_redraw = true;
+
+    layout_init();
+    shell_ui_init();
 }
 
 void compositor_register_window(window_t *win) {
@@ -35,80 +39,36 @@ compositor_state_t *compositor_get_state(void) {
     return &s_comp;
 }
 
-static void draw_dock(void) {
-    uint32_t dock_x = 12;
-    uint32_t dock_y = 12;
-    uint32_t dock_w = 56;
-    uint32_t dock_h = s_comp.screen_height - 24;
-
-    fb_draw_rounded_rect(dock_x, dock_y, dock_w, dock_h, 16, COLOR_SURFACE, COLOR_BORDER);
-
-    // Crest Icon
-    fb_draw_rounded_rect(dock_x + 10, dock_y + 12, 36, 36, 8, COLOR_ACCENT, 0);
-    fb_draw_string("C", dock_x + 24, dock_y + 22, COLOR_WHITE, 0);
-
-    // Workspace Pills
-    uint32_t ws_y = dock_y + 60;
-    const char *ws_labels[] = {"1", "2", "3", "4", "+"};
-    for (int i = 0; i < 5; i++) {
-        uint32_t pill_bg = (i + 1 == s_comp.active_workspace) ? COLOR_ACCENT : COLOR_SURFACE_ALT;
-        uint32_t pill_fg = (i + 1 == s_comp.active_workspace) ? COLOR_WHITE : COLOR_TEXT;
-        fb_draw_rounded_rect(dock_x + 14, ws_y + (i * 38), 28, 28, 6, pill_bg, COLOR_BORDER);
-        fb_draw_string(ws_labels[i], dock_x + 24, ws_y + (i * 38) + 6, pill_fg, 0);
+void compositor_set_workspace(uint8_t ws) {
+    if (ws >= 1 && ws <= 4) {
+        s_comp.active_workspace = ws;
+        s_comp.needs_redraw = true;
     }
-
-    // Bottom Controls
-    uint32_t bot_y = dock_y + dock_h - 130;
-    fb_draw_rounded_rect(dock_x + 14, bot_y, 28, 28, 6, COLOR_SURFACE_ALT, COLOR_BORDER);
-    fb_draw_string("v", dock_x + 24, bot_y + 6, COLOR_TEXT_MUTED, 0);
-
-    fb_draw_rounded_rect(dock_x + 14, bot_y + 36, 28, 28, 6, COLOR_SURFACE_ALT, COLOR_BORDER);
-    fb_draw_string("w", dock_x + 24, bot_y + 42, COLOR_TEXT_MUTED, 0);
-
-    fb_draw_rounded_rect(dock_x + 14, bot_y + 72, 28, 28, 6, COLOR_ACCENT, 0);
-    fb_draw_string("x", dock_x + 24, bot_y + 78, COLOR_WHITE, 0);
 }
 
-static void draw_dynamic_island(void) {
-    uint32_t island_w = 340;
-    uint32_t island_h = 36;
-    uint32_t island_x = (s_comp.screen_width - island_w) / 2;
-    uint32_t island_y = 12;
-
-    fb_draw_rounded_rect(island_x, island_y, island_w, island_h, 18, COLOR_SURFACE, COLOR_BORDER);
-
-    rtc_time_t now;
-    rtc_get_time(&now);
-    char buf[64];
-    const char *win_name = s_comp.focused_window ? s_comp.focused_window->title : "Chef OS";
-
-    // Format top pill string
-    strcpy(buf, win_name);
-    strcat(buf, "  ::  ");
-    char time_str[16];
-    time_str[0] = '0' + (now.hour / 10);
-    time_str[1] = '0' + (now.hour % 10);
-    time_str[2] = ':';
-    time_str[3] = '0' + (now.minute / 10);
-    time_str[4] = '0' + (now.minute % 10);
-    time_str[5] = '\0';
-    strcat(buf, time_str);
-
-    fb_draw_string(buf, island_x + 36, island_y + 10, COLOR_TEXT, 0);
+void compositor_cycle_focus(void) {
+    if (!s_comp.window_list) return;
+    if (s_comp.focused_window && s_comp.focused_window->next) {
+        s_comp.focused_window = s_comp.focused_window->next;
+    } else {
+        s_comp.focused_window = s_comp.window_list;
+    }
+    s_comp.needs_redraw = true;
 }
 
 static void draw_window(window_t *win) {
-    if (!win || win->is_minimized) return;
+    if (!win || win->is_minimized || win->workspace_id != s_comp.active_workspace) return;
 
-    // Window Frame / Shadow
+    // Window Frame
     fb_draw_rounded_rect(win->x, win->y, win->width, win->height, 12, COLOR_SURFACE, COLOR_BORDER);
 
     // Titlebar
-    uint32_t tb_bg = win->is_focused ? COLOR_SURFACE_ALT : COLOR_SURFACE;
+    uint32_t tb_bg = (win == s_comp.focused_window) ? COLOR_SURFACE_ALT : COLOR_SURFACE;
     fb_draw_rounded_rect(win->x, win->y, win->width, WINDOW_TITLEBAR_HEIGHT, 12, tb_bg, COLOR_BORDER);
 
     // Title text
-    fb_draw_string(win->title, win->x + 14, win->y + 6, COLOR_TEXT, 0);
+    uint32_t title_fg = (win == s_comp.focused_window) ? COLOR_TEXT : COLOR_TEXT_MUTED;
+    fb_draw_string(win->title, win->x + 14, win->y + 6, title_fg, 0);
 
     // Window Close Pill (Right side)
     uint32_t close_x = win->x + win->width - 24;
@@ -138,21 +98,30 @@ void compositor_render_frame(void) {
     // 1. Clear background
     fb_clear(COLOR_BG);
 
-    // 2. Render Left Dock & Dynamic Island
-    draw_dock();
-    draw_dynamic_island();
+    // 2. Apply Dynamic Tiling Layout Engine
+    layout_apply(s_comp.window_list, s_comp.active_workspace, s_comp.screen_width, s_comp.screen_height);
 
-    // 3. Render Windows in Z-order
+    // 3. Render Windows in workspace
     window_t *curr = s_comp.window_list;
     while (curr) {
-        draw_window(curr);
+        if (curr != s_comp.focused_window) {
+            draw_window(curr);
+        }
         curr = curr->next;
     }
+    if (s_comp.focused_window) {
+        draw_window(s_comp.focused_window);
+    }
 
-    // 4. Render Mouse Cursor
+    // 4. Render Shell Dock & Dynamic Island
+    shell_ui_render_dock(s_comp.screen_height, s_comp.active_workspace);
+    const char *focused_title = s_comp.focused_window ? s_comp.focused_window->title : "Chef OS";
+    shell_ui_render_island(s_comp.screen_width, focused_title, layout_get_mode_name());
+
+    // 5. Render Mouse Cursor
     fb_draw_cursor(s_comp.mouse_x, s_comp.mouse_y);
 
-    // 5. Present frame to GOP Framebuffer
+    // 6. Present to GOP Frontbuffer
     fb_swap();
     s_comp.needs_redraw = false;
 }

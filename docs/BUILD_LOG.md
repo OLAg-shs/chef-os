@@ -83,3 +83,15 @@
   - **Multi-Window Layout:** Live verification of Terminal (`chef-sh`), System Performance Monitor, and VFS Storage Explorer.
 - **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/compositor_milestone.png`.
 - **Next Task:** Gate G12 — Window Management & Dynamic Tiling Engine.
+
+## [2026-09-03T10:47:00Z] Gates G12, G13, G14 Completed (Tiling WM, Shell UI, Design System)
+- **Status:** Gates G12, G13, G14 **GREEN**.
+- **Completed Subsystems:**
+  - **Dynamic Tiling Engine (`compositor/layout.c`):** Implemented `LAYOUT_MASTER_STACK` (62/38 split), `LAYOUT_GRID`, `LAYOUT_MONOCLE`, and `LAYOUT_FLOATING` modes with fixed-point arithmetic, 12px inner gaps, and 84px/60px outer margins.
+  - **Window Subsystem (`compositor/window.c`):** Implemented paint callbacks on dynamic resizing, active focus cycling, and workspace multi-tenancy.
+  - **Shell UI Subsystem (`compositor/shell_ui.c`):**
+    - **Dynamic Island:** Contextual pill displaying focused window title, active layout mode, live CMOS real-time clock, and slide-in toast notifications.
+    - **Left Vertical Dock:** Crest icon `[C]`, workspace switchers `[1]`-`[4]`, app quick-launchers (Terminal `[>]`, Monitor `[#]`, Files `[/]`), and system power/tray controls.
+  - **Chef Cream Design System:** Strict implementation of warm parchment `#F1EBDD`, frosted surface `#F8F4EA`, deep ink `#2B2A28`, muted slate `#6E6A5F`, and rust accent `#A6534A`.
+- **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/tiling_wm_milestone.png`.
+- **Next Task:** Gate G15 — Native Audio Subsystem & Sound Server.

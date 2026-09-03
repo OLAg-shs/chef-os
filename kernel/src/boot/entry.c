@@ -26,6 +26,8 @@
 #include "compositor/compositor.h"
 #include "compositor/window.h"
 #include "compositor/surface.h"
+#include "compositor/layout.h"
+#include "compositor/shell_ui.h"
 
 // Limine Requests
 __attribute__((used, section(".requests")))
@@ -64,6 +66,40 @@ void halt(void) {
         cli();
         hlt();
     }
+}
+
+static void paint_terminal_window(window_t *win) {
+    if (!win || !win->surface) return;
+    surface_clear(win->surface, COLOR_SURFACE);
+    surface_draw_string(win->surface, "Chef OS 1.0 (Warm Parchment) x86_64", 16, 12, COLOR_TEXT);
+    surface_draw_string(win->surface, "Kernel higher-half micro-core online.", 16, 32, COLOR_TEXT_MUTED);
+    surface_draw_string(win->surface, "PID 1 init supervisor running: klogd, compositor, chef-sh", 16, 52, COLOR_TEXT_MUTED);
+    surface_draw_string(win->surface, "Dynamic Tiling Engine: Master-Stack Layout active.", 16, 72, COLOR_TEXT_MUTED);
+    surface_draw_string(win->surface, "chef-os> uname", 16, 102, COLOR_ACCENT);
+    surface_draw_string(win->surface, "Chef OS 1.0.0-alpha x86_64 (Warm Parchment)", 16, 122, COLOR_TEXT);
+    surface_draw_string(win->surface, "chef-os> cat /etc/os-release", 16, 152, COLOR_ACCENT);
+    surface_draw_string(win->surface, "NAME=\"Chef OS\" VERSION=\"1.0.0-alpha\" ID=chef-os", 16, 172, COLOR_TEXT);
+    surface_draw_string(win->surface, "chef-os> _", 16, 202, COLOR_TEXT);
+}
+
+static void paint_system_window(window_t *win) {
+    if (!win || !win->surface) return;
+    surface_clear(win->surface, COLOR_SURFACE);
+    surface_draw_string(win->surface, "CPU: x86_64 Core [ONLINE]", 16, 12, COLOR_TEXT);
+    surface_draw_string(win->surface, "RAM: 2016 MB (1991 MB Free)", 16, 32, COLOR_TEXT);
+    surface_draw_string(win->surface, "Timer: 1000 Hz PIT (1ms)", 16, 52, COLOR_TEXT_MUTED);
+    surface_draw_string(win->surface, "RTC: CMOS UTC Active", 16, 72, COLOR_TEXT_MUTED);
+    surface_draw_string(win->surface, "Status: Nominal | Ring 3 Ready", 16, 92, COLOR_GREEN);
+}
+
+static void paint_vfs_window(window_t *win) {
+    if (!win || !win->surface) return;
+    surface_clear(win->surface, COLOR_SURFACE);
+    surface_draw_string(win->surface, "Mount: / (RamFS Root)", 16, 12, COLOR_TEXT);
+    surface_draw_string(win->surface, "  |-- /bin/  [Binaries]", 16, 32, COLOR_TEXT_MUTED);
+    surface_draw_string(win->surface, "  |-- /dev/  [serial, kbd, ata0]", 16, 52, COLOR_TEXT_MUTED);
+    surface_draw_string(win->surface, "  |-- /etc/  [os-release]", 16, 72, COLOR_TEXT_MUTED);
+    surface_draw_string(win->surface, "Storage: /dev/ata0 [READY]", 16, 92, COLOR_BLUE);
 }
 
 void kmain(void) {
@@ -182,56 +218,44 @@ void kmain(void) {
     // 13. Initialize Syscall ABI & MSRs
     kprintf("[+] Initializing Syscall ABI (MSR STAR, LSTAR, SFMASK)... ");
     syscall_init(hhdm_offset);
-    // 14. Initialize Native Display Server & Compositor Architecture (Gate G11)
-    kprintf("[+] Initializing Native 2D Surface Compositor & Window Server... ");
+    kprintf("[ OK ]\n");
+
+    // 14. Initialize Native Display Server & Dynamic Tiling Compositor (Gates G11-G14)
+    kprintf("[+] Initializing Native 2D Surface Compositor & Dynamic Tiling Engine... ");
     compositor_init();
 
-    // Create Window 1: Native Terminal Console
-    window_t *term_win = window_create(88, 60, 720, 480, "Chef OS Parchment Terminal (chef-sh)");
-    if (term_win && term_win->surface) {
-        surface_clear(term_win->surface, COLOR_SURFACE);
-        surface_draw_string(term_win->surface, "Chef OS 1.0 (Warm Parchment) x86_64", 16, 12, COLOR_TEXT);
-        surface_draw_string(term_win->surface, "Kernel higher-half micro-core online.", 16, 32, COLOR_TEXT_MUTED);
-        surface_draw_string(term_win->surface, "PID 1 init supervisor running: klogd, compositor, chef-sh", 16, 52, COLOR_TEXT_MUTED);
-        surface_draw_string(term_win->surface, "chef-os> uname", 16, 82, COLOR_ACCENT);
-        surface_draw_string(term_win->surface, "Chef OS 1.0.0-alpha x86_64 (Warm Parchment)", 16, 102, COLOR_TEXT);
-        surface_draw_string(term_win->surface, "chef-os> cat /etc/os-release", 16, 132, COLOR_ACCENT);
-        surface_draw_string(term_win->surface, "NAME=\"Chef OS\" VERSION=\"1.0.0-alpha\" ID=chef-os", 16, 152, COLOR_TEXT);
-        surface_draw_string(term_win->surface, "chef-os> _", 16, 182, COLOR_TEXT);
-    }
-    compositor_register_window(term_win);
-
-    // Create Window 2: System Performance & Hardware Dashboard
-    window_t *sys_win = window_create(828, 60, 420, 230, "System Performance Monitor");
-    if (sys_win && sys_win->surface) {
-        surface_clear(sys_win->surface, COLOR_SURFACE);
-        surface_draw_string(sys_win->surface, "CPU: x86_64 Higher-Half Core [ONLINE]", 16, 12, COLOR_TEXT);
-        surface_draw_string(sys_win->surface, "RAM: 2016 MB Total (1991 MB Free)", 16, 32, COLOR_TEXT);
-        surface_draw_string(sys_win->surface, "Clock: 1000 Hz PIT Timer (1ms ticks)", 16, 52, COLOR_TEXT_MUTED);
-        surface_draw_string(sys_win->surface, "RTC: CMOS UTC Hardware Clock Active", 16, 72, COLOR_TEXT_MUTED);
-        surface_draw_string(sys_win->surface, "GPU: UEFI GOP Linear Framebuffer 32bpp", 16, 92, COLOR_TEXT_MUTED);
-        surface_draw_string(sys_win->surface, "Status: Nominal | 0 Faults | Ring 3 Ready", 16, 122, COLOR_GREEN);
-    }
-    compositor_register_window(sys_win);
-
-    // Create Window 3: Storage & VFS Tree Explorer
+    // Create Window 3: Storage & VFS Tree Explorer (Stack Bottom)
     window_t *vfs_win = window_create(828, 305, 420, 235, "VFS Storage Explorer (/dev, /etc)");
-    if (vfs_win && vfs_win->surface) {
-        surface_clear(vfs_win->surface, COLOR_SURFACE);
-        surface_draw_string(vfs_win->surface, "Mount: / (RamFS Root)", 16, 12, COLOR_TEXT);
-        surface_draw_string(vfs_win->surface, "  |-- /bin/      [Applications & Binaries]", 16, 32, COLOR_TEXT_MUTED);
-        surface_draw_string(vfs_win->surface, "  |-- /dev/      [serial, null, zero, kbd, ata0]", 16, 52, COLOR_TEXT_MUTED);
-        surface_draw_string(vfs_win->surface, "  |-- /etc/      [os-release, hostname, sysconfig]", 16, 72, COLOR_TEXT_MUTED);
-        surface_draw_string(vfs_win->surface, "  \\-- /home/     [chef_carthy (User Home)]", 16, 92, COLOR_TEXT_MUTED);
-        surface_draw_string(vfs_win->surface, "Storage: /dev/ata0 PIO Block Storage [READY]", 16, 122, COLOR_BLUE);
+    if (vfs_win) {
+        vfs_win->workspace_id = 1;
+        vfs_win->paint = paint_vfs_window;
+        paint_vfs_window(vfs_win);
+        compositor_register_window(vfs_win);
     }
-    compositor_register_window(vfs_win);
+
+    // Create Window 2: System Performance & Hardware Dashboard (Stack Top)
+    window_t *sys_win = window_create(828, 60, 420, 230, "System Performance Monitor");
+    if (sys_win) {
+        sys_win->workspace_id = 1;
+        sys_win->paint = paint_system_window;
+        paint_system_window(sys_win);
+        compositor_register_window(sys_win);
+    }
+
+    // Create Window 1: Native Terminal Console (Master Window)
+    window_t *term_win = window_create(88, 60, 720, 480, "Chef OS Parchment Terminal (chef-sh)");
+    if (term_win) {
+        term_win->workspace_id = 1;
+        term_win->paint = paint_terminal_window;
+        paint_terminal_window(term_win);
+        compositor_register_window(term_win);
+    }
 
     kprintf("[ OK ]\n\n");
 
     kprintf("------------------------------------------------------\n");
-    kprintf("Chef OS Native Compositor & Window Server Online.\n");
-    kprintf("Dynamic Island, Left Dock, and 3 Client Windows Active.\n\n");
+    kprintf("Chef OS Native Compositor & Tiling Window Manager Online.\n");
+    kprintf("Dynamic Island, Left Dock, and 3 Tiled Client Windows Active.\n\n");
 
     // Render composited desktop
     compositor_render_frame();
@@ -243,7 +267,16 @@ void kmain(void) {
 
         char c = keyboard_get_last_char();
         if (c) {
-            chef_shell_handle_char(c);
+            if (c >= '1' && c <= '4') {
+                compositor_set_workspace(c - '0');
+            } else if (c == ' ') {
+                layout_cycle_mode();
+            } else if (c == '\t') {
+                compositor_cycle_focus();
+            } else {
+                chef_shell_handle_char(c);
+            }
+            compositor_render_frame();
         }
         hlt();
     }
