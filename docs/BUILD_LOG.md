@@ -41,3 +41,13 @@
   - **Ring 3 User Mode Verification:** Allocated and mapped user-space page at `0x400000` (`PTE_USER`), jumped from Ring 0 to Ring 3 via `iretq`, executed native `syscall` instruction in user space, processed `SYS_WRITE` back through kernel, and returned cleanly to user space.
 - **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/syscall_ring3_milestone.png`.
 - **Next Task:** Gate G7 — Hardware Abstraction & Driver Layer.
+
+## [2026-09-03T02:17:00Z] Gate G7 Completed (Hardware Abstraction & Driver Layer)
+- **Status:** Gate G7 **GREEN**.
+- **Completed Drivers:**
+  - **PCI Bus Scanner (`drivers/pci.c`):** Configuration space reader (ports 0xCF8/0xCFC) traversing all 256 buses and 32 devices.
+  - **PIT Timer (`drivers/timer.c`):** 1000Hz (1ms tick) calibration on IRQ 0 with sleep utilities.
+  - **CMOS RTC (`drivers/rtc.c`):** Ports 0x70/0x71 reader with BCD conversion for UTC timestamping.
+  - **PS/2 Mouse (`drivers/ps2_mouse.c`):** Auxiliary PS/2 packet streaming on IRQ 12, delta coordinate tracker, and hardware cursor rendering on framebuffer.
+- **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/hardware_drivers_milestone.png`.
+- **Next Task:** Gate G8 — Filesystem & Storage Model.

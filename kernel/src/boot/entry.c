@@ -9,6 +9,10 @@
 #include "video/fb.h"
 #include "drivers/serial.h"
 #include "drivers/keyboard.h"
+#include "drivers/ps2_mouse.h"
+#include "drivers/timer.h"
+#include "drivers/rtc.h"
+#include "drivers/pci.h"
 #include "proc/sched.h"
 #include "sys/syscall.h"
 
@@ -95,9 +99,26 @@ void kmain(void) {
     heap_init(hhdm_offset);
     kprintf("[ OK ]\n");
 
-    // 8. Initialize PS/2 Keyboard Driver
-    kprintf("[+] Initializing PS/2 Keyboard Driver... ");
+    // 8. Initialize Hardware Drivers (PIT, RTC, PCI, Keyboard, Mouse)
+    kprintf("[+] Initializing PIT System Clock (1000 Hz / 1ms)... ");
+    timer_init(1000);
+    kprintf("[ OK ]\n");
+
+    kprintf("[+] Initializing CMOS Real-Time Clock (RTC)... ");
+    rtc_init();
+    rtc_time_t now;
+    rtc_get_time(&now);
+    kprintf("[ OK ] (%d-%d-%d %d:%d:%d UTC)\n", (int)now.year, (int)now.month, (int)now.day, (int)now.hour, (int)now.minute, (int)now.second);
+
+    kprintf("[+] Enumerating PCI Bus & Device Configuration Space... ");
+    pci_init();
+    kprintf("[ OK ]\n");
+
+    kprintf("[+] Initializing PS/2 Keyboard & Mouse Drivers... ");
     keyboard_init();
+    fb_info_t *cur_fb = fb_get_info();
+    ps2_mouse_init(cur_fb ? cur_fb->width : 1280, cur_fb ? cur_fb->height : 800);
+    fb_draw_cursor(500, 350);
     kprintf("[ OK ]\n");
 
     // 9. Initialize Thread Scheduler
@@ -116,7 +137,7 @@ void kmain(void) {
     kprintf("[ OK ]\n\n");
 
     kprintf("------------------------------------------------------\n");
-    kprintf("Chef OS Kernel Foundation & Syscall Layer Online.\n");
+    kprintf("Chef OS Kernel Foundation & Hardware Drivers Online.\n");
     kprintf("Testing Ring 3 User Mode transition & native syscall:\n");
 
     // 12. Switch to Ring 3 User Mode & Execute Syscall Test

@@ -163,3 +163,39 @@ void fb_draw_desktop_shell(void) {
 
     fb_swap();
 }
+
+fb_info_t *fb_get_info(void) {
+    return &g_fb;
+}
+
+void fb_draw_cursor(int32_t x, int32_t y) {
+    // 10x15 Arrow Mouse Cursor in Restrained Accent / Dark Ink
+    static const uint8_t cursor_bitmap[15][10] = {
+        {1,0,0,0,0,0,0,0,0,0},
+        {1,1,0,0,0,0,0,0,0,0},
+        {1,2,1,0,0,0,0,0,0,0},
+        {1,2,2,1,0,0,0,0,0,0},
+        {1,2,2,2,1,0,0,0,0,0},
+        {1,2,2,2,2,1,0,0,0,0},
+        {1,2,2,2,2,2,1,0,0,0},
+        {1,2,2,2,2,2,2,1,0,0},
+        {1,2,2,2,2,1,1,1,1,0},
+        {1,2,2,1,2,1,0,0,0,0},
+        {1,2,1,0,1,2,1,0,0,0},
+        {1,1,0,0,1,2,1,0,0,0},
+        {1,0,0,0,0,1,2,1,0,0},
+        {0,0,0,0,0,1,2,1,0,0},
+        {0,0,0,0,0,0,1,1,0,0}
+    };
+
+    for (int r = 0; r < 15; r++) {
+        for (int c = 0; c < 10; c++) {
+            uint8_t val = cursor_bitmap[r][c];
+            if (val == 1) {
+                fb_put_pixel(x + c, y + r, COLOR_TEXT);
+            } else if (val == 2) {
+                fb_put_pixel(x + c, y + r, COLOR_WHITE);
+            }
+        }
+    }
+}

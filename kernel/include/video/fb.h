@@ -40,5 +40,7 @@ void fb_putc(char c);
 void fb_puts(const char *str);
 void fb_swap(void);
 void fb_draw_desktop_shell(void);
+fb_info_t *fb_get_info(void);
+void fb_draw_cursor(int32_t x, int32_t y);
 
 #endif
