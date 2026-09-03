@@ -1,8 +1,8 @@
 # Chef OS Build Progress
 
 ## Current Gate Status
-- **Current Active Gate:** `G2 — Architecture Discovery & Decisions Frozen`
-- **Previous Gate:** `G1 — New Repository Foundation & Isolation` (STATUS: **GREEN**)
+- **Current Active Gate:** `G3 — Reproducible Cross-Toolchain & Build System`
+- **Previous Gate:** `G2 — Architecture Discovery & Decisions Frozen` (STATUS: **GREEN**)
 - **Overall Project Status:** IN PROGRESS
 
 ---
@@ -13,8 +13,8 @@
 | :--- | :--- | :---: | :---: | :---: |
 | **G0** | V7 Preserved & Frozen in `Chef_Carthy` | **GREEN** | `eb3e9c8` (tag `v7-archive`) | 2026-09-03 |
 | **G1** | New Repository Foundation & Isolation | **GREEN** | `cbdfee1` | 2026-09-03 |
-| **G2** | Architecture Discovery & Decisions Frozen | **IN PROGRESS** | Current Milestone | Pending |
-| **G3** | Reproducible Cross-Toolchain & Build System | PENDING | - | - |
+| **G2** | Architecture Discovery & Decisions Frozen | **GREEN** | Current Commit | 2026-09-03 |
+| **G3** | Reproducible Cross-Toolchain & Build System | **IN PROGRESS** | Current Milestone | Pending |
 | **G4** | Bootloader & Firmware Entry Milestone | PENDING | - | - |
 | **G5** | Kernel Foundation (PMM, VMM, Interrupts, Threads) | PENDING | - | - |
 | **G6** | Syscall ABI & User/Kernel Transition | PENDING | - | - |
