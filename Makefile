@@ -19,7 +19,8 @@ C_SRCS := $(wildcard kernel/src/boot/*.c) \
           $(wildcard kernel/src/drivers/*.c) \
           $(wildcard kernel/src/proc/*.c) \
           $(wildcard kernel/src/fs/*.c) \
-          $(wildcard kernel/src/user/*.c)
+          $(wildcard kernel/src/user/*.c) \
+          $(wildcard kernel/src/compositor/*.c)
 
 ASM_SRCS := $(wildcard kernel/src/arch/x86_64/*.S)
 

@@ -1,8 +1,8 @@
 # Chef OS Build Progress
 
 ## Current Gate Status
-- **Current Active Gate:** `G11 — Native Compositor & Display Engine`
-- **Previous Gate:** `G10 — Core Userland & Shell Utilities` (STATUS: **GREEN**)
+- **Current Active Gate:** `G12 — Window Management & Dynamic Tiling Engine`
+- **Previous Gate:** `G11 — Native Compositor & Display Engine` (STATUS: **GREEN**)
 - **Overall Project Status:** IN PROGRESS
 
 ---

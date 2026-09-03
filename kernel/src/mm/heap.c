@@ -14,7 +14,7 @@ static uint64_t s_hhdm = 0;
 
 void heap_init(uint64_t hhdm_offset) {
     s_hhdm = hhdm_offset;
-    size_t initial_pages = 256; // 1 MB initial kernel heap
+    size_t initial_pages = 8192; // 32 MB initial kernel heap
     void *phys = pmm_alloc_pages(initial_pages);
     s_heap_start = (uint8_t *)((uint64_t)phys + s_hhdm);
 

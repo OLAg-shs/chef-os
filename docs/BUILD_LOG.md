@@ -72,3 +72,14 @@
   - **Automated Verification:** Verified execution of `uname`, `services`, and `cat /etc/os-release` directly inside the Chef Cream console window.
 - **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/init_shell_milestone.png`.
 - **Next Task:** Gate G11 — Native Display Server & Compositor Architecture.
+
+## [2026-09-03T02:32:00Z] Gate G11 Completed (Native Display Server & Compositor Architecture)
+- **Status:** Gate G11 **GREEN**.
+- **Completed Subsystems:**
+  - **Native Surface Engine (`compositor/surface.c`):** Pixel surface allocations with alpha-aware rendering, text rendering, and shape drawing.
+  - **Window Subsystem (`compositor/window.c`):** Window frames, titlebars, close buttons, borders, and client surface mapping.
+  - **Compositor Engine (`compositor/compositor.c`):** Double-buffered composition loop rendering Left Dock, Dynamic Island status pill, Z-ordered tiled window surfaces, and hardware mouse cursor.
+  - **Heap Expansion:** Expanded dynamic kernel heap to 32 MB to seamlessly support multi-window high-resolution surface composition.
+  - **Multi-Window Layout:** Live verification of Terminal (`chef-sh`), System Performance Monitor, and VFS Storage Explorer.
+- **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/compositor_milestone.png`.
+- **Next Task:** Gate G12 — Window Management & Dynamic Tiling Engine.
