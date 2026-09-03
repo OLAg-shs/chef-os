@@ -1,3 +1,4 @@
+#include "fs/vfs.h"
 #include "sys/syscall.h"
 #include "arch/gdt.h"
 #include "arch/io.h"
@@ -87,6 +88,16 @@ int64_t syscall_dispatch(uint64_t num, uint64_t a1, uint64_t a2, uint64_t a3, ui
                 return 0;
             }
             return -1;
+        }
+        case SYS_OPEN: {
+            const char *path = (const char *)a1;
+            int flags = (int)a2;
+            return (int64_t)vfs_open(path, flags);
+        }
+        case SYS_CLOSE: {
+            int fd = (int)a1;
+            vfs_close(fd);
+            return 0;
         }
         case SYS_GETPID:
             return 1;

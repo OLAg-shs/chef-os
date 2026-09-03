@@ -1,5 +1,6 @@
 #include "limine.h"
 #include "kernel.h"
+#include "string.h"
 #include "arch/gdt.h"
 #include "arch/idt.h"
 #include "arch/io.h"
@@ -13,6 +14,10 @@
 #include "drivers/timer.h"
 #include "drivers/rtc.h"
 #include "drivers/pci.h"
+#include "drivers/ata.h"
+#include "fs/vfs.h"
+#include "fs/ramfs.h"
+#include "fs/devfs.h"
 #include "proc/sched.h"
 #include "sys/syscall.h"
 
@@ -99,7 +104,7 @@ void kmain(void) {
     heap_init(hhdm_offset);
     kprintf("[ OK ]\n");
 
-    // 8. Initialize Hardware Drivers (PIT, RTC, PCI, Keyboard, Mouse)
+    // 8. Initialize Hardware Drivers (PIT, RTC, PCI, Keyboard, Mouse, Storage)
     kprintf("[+] Initializing PIT System Clock (1000 Hz / 1ms)... ");
     timer_init(1000);
     kprintf("[ OK ]\n");
@@ -121,26 +126,57 @@ void kmain(void) {
     fb_draw_cursor(500, 350);
     kprintf("[ OK ]\n");
 
-    // 9. Initialize Thread Scheduler
+    // 9. Initialize Virtual Filesystem (VFS) & Mount RamFS Root
+    kprintf("[+] Initializing Virtual Filesystem (VFS) & Mounting RamFS... ");
+    vfs_init();
+    g_vfs_root = ramfs_create_root();
+
+    vfs_node_t *dev_dir = ramfs_create_dir(g_vfs_root, "dev");
+    vfs_node_t *bin_dir = ramfs_create_dir(g_vfs_root, "bin");
+    vfs_node_t *etc_dir = ramfs_create_dir(g_vfs_root, "etc");
+    vfs_node_t *home_dir = ramfs_create_dir(g_vfs_root, "home");
+    (void)bin_dir; (void)home_dir;
+
+    devfs_init(dev_dir);
+
+    const char os_release[] = "NAME=\"Chef OS\"\nVERSION=\"1.0.0-alpha\"\nID=chef-os\nPRETTY_NAME=\"Chef OS 1.0 (Warm Parchment)\"\n";
+    ramfs_create_file(etc_dir, "os-release", os_release, sizeof(os_release) - 1);
+    kprintf("[ OK ]\n");
+
+    kprintf("[+] Initializing ATA/IDE Storage Controller... ");
+    ata_init();
+    kprintf("[ OK ] (/dev/ata0 online)\n");
+
+    // Verify /etc/os-release file read via VFS
+    int os_fd = vfs_open("/etc/os-release", O_RDONLY);
+    if (os_fd >= 0) {
+        char os_buf[64];
+        memset(os_buf, 0, sizeof(os_buf));
+        vfs_read(os_fd, os_buf, 32);
+        vfs_close(os_fd);
+        kprintf("[+] Verified VFS Read on /etc/os-release [ OK ]\n");
+    }
+
+    // 10. Initialize Thread Scheduler
     kprintf("[+] Initializing Preemptive Thread Scheduler... ");
     sched_init();
     kprintf("[ OK ]\n");
 
-    // 10. Enable Hardware Interrupts
+    // 11. Enable Hardware Interrupts
     kprintf("[+] Enabling Hardware Interrupts (STI)... ");
     sti();
     kprintf("[ OK ]\n");
 
-    // 11. Initialize Syscall ABI & MSRs
+    // 12. Initialize Syscall ABI & MSRs
     kprintf("[+] Initializing Syscall ABI (MSR STAR, LSTAR, SFMASK)... ");
     syscall_init(hhdm_offset);
     kprintf("[ OK ]\n\n");
 
     kprintf("------------------------------------------------------\n");
-    kprintf("Chef OS Kernel Foundation & Hardware Drivers Online.\n");
+    kprintf("Chef OS Kernel Foundation & VFS Hierarchy Online.\n");
     kprintf("Testing Ring 3 User Mode transition & native syscall:\n");
 
-    // 12. Switch to Ring 3 User Mode & Execute Syscall Test
+    // 13. Switch to Ring 3 User Mode & Execute Syscall Test
     user_mode_enter_test();
 
     while (1) {

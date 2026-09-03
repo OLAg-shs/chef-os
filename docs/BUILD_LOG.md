@@ -51,3 +51,14 @@
   - **PS/2 Mouse (`drivers/ps2_mouse.c`):** Auxiliary PS/2 packet streaming on IRQ 12, delta coordinate tracker, and hardware cursor rendering on framebuffer.
 - **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/hardware_drivers_milestone.png`.
 - **Next Task:** Gate G8 — Filesystem & Storage Model.
+
+## [2026-09-03T02:23:00Z] Gate G8 Completed (Filesystem & Storage Model)
+- **Status:** Gate G8 **GREEN**.
+- **Completed Subsystems:**
+  - **Virtual Filesystem (`fs/vfs.c`):** Unified POSIX node operations (`open`, `close`, `read`, `write`, `finddir`), file descriptor table, and mount point resolution.
+  - **RamFS In-Memory Filesystem (`fs/ramfs.c`):** Dynamic hierarchical in-memory filesystem with support for directories, files, resizing, and content read/write.
+  - **DevFS (`fs/devfs.c`):** Mounted at `/dev` with character devices `/dev/serial`, `/dev/null`, `/dev/zero`, `/dev/kbd`.
+  - **ATA Storage Driver (`drivers/ata.c`):** Primary channel 28-bit/48-bit LBA PIO sector read/write for `/dev/ata0`.
+  - **VFS Verification:** Verified directory hierarchy (`/bin`, `/dev`, `/etc`, `/home`), creation of `/etc/os-release`, and successful read of OS release information through VFS descriptors.
+- **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/vfs_storage_milestone.png`.
+- **Next Task:** Gate G9 — Init System & Service Manager.

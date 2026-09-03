@@ -1,8 +1,8 @@
 # Chef OS Build Progress
 
 ## Current Gate Status
-- **Current Active Gate:** `G8 — Filesystem & Storage Model`
-- **Previous Gate:** `G7 — Hardware Abstraction & Driver Layer` (STATUS: **GREEN**)
+- **Current Active Gate:** `G9 — Init System & Service Manager`
+- **Previous Gate:** `G8 — Filesystem & Storage Model` (STATUS: **GREEN**)
 - **Overall Project Status:** IN PROGRESS
 
 ---
@@ -19,8 +19,8 @@
 | **G5** | Kernel Foundation (PMM, VMM, Interrupts, Threads) | **GREEN** | Current Commit | 2026-09-03 |
 | **G6** | Syscall ABI & User/Kernel Transition | **GREEN** | Current Commit | 2026-09-03 |
 | **G7** | Hardware Abstraction & Driver Layer | **GREEN** | Current Commit | 2026-09-03 |
-| **G8** | Filesystem & Storage Model | **IN PROGRESS** | Current Milestone | Pending |
-| **G9** | Init System & Service Manager | PENDING | - | - |
+| **G8** | Filesystem & Storage Model | **GREEN** | Current Commit | 2026-09-03 |
+| **G9** | Init System & Service Manager | **IN PROGRESS** | Current Milestone | Pending |
 | **G10** | Core Userland & Shell Utilities | PENDING | - | - |
 | **G11** | Security & Process Isolation Model | PENDING | - | - |
 | **G12** | Networking & Audio Services | PENDING | - | - |
