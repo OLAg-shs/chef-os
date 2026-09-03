@@ -2,9 +2,9 @@
 
 | Req ID | Category | Requirement Description | Target Gate | Status |
 | :--- | :--- | :--- | :---: | :---: |
-| **REQ-CORE-01** | Project Isolation | Independent repository, git history, and remote separate from Chef_Carthy | G1 | IN PROGRESS |
-| **REQ-BOOT-01** | Boot | UEFI-compliant 64-bit bootloader loading kernel image | G4 | OPEN |
-| **REQ-KERN-01** | Kernel | 64-bit kernel with PMM (bitmap/buddy), VMM (4-level paging), IDT, and scheduler | G5 | OPEN |
+| **REQ-CORE-01** | Project Isolation | Independent repository, git history, and remote separate from Chef_Carthy | G1 | **PASSED** |
+| **REQ-BOOT-01** | Boot | UEFI-compliant 64-bit bootloader loading kernel image | G4 | **PASSED** |
+| **REQ-KERN-01** | Kernel | 64-bit kernel with PMM (bitmap/buddy), VMM (4-level paging), IDT, and scheduler | G5 | **PASSED** |
 | **REQ-SYSC-01** | ABI | Stable system call interface and user/kernel privilege transition | G6 | OPEN |
 | **REQ-DRIV-01** | Drivers | Framebuffer (GOP), PS/2 & USB HID (keyboard, pointer), timer (APIC/PIT), storage (AHCI/NVMe) | G7 | OPEN |
 | **REQ-FS-01**   | Storage | Partition-aware filesystem driver with read/write and integrity checks | G8 | OPEN |

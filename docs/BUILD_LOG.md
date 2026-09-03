@@ -22,3 +22,12 @@
 - **Decisions:** ADR-0001 through ADR-0007 documented and frozen in `docs/DECISIONS.md`.
 - **Architecture:** Complete x86_64, UEFI, Limine v2, PMM, VMM, Syscall, and Native Compositor blueprint in `docs/ARCHITECTURE.md`.
 - **Toolchain Verified:** `gcc`, `nasm`, `xorriso`, `mtools`, `qemu-system-x86_64`, `edk2-ovmf`, `limine`.
+
+## [2026-09-03T02:04:00Z] Gates G3, G4, and G5 Completed (Kernel Foundation & Boot Verified)
+- **Status:** Gates G3, G4, G5 all **GREEN**.
+- **Completed Subsystems:**
+  - **Toolchain & Build System (G3):** Makefile, x86_64 freestanding GCC/NASM toolchain, `scripts/build_iso.sh`, `scripts/run_qemu.sh`.
+  - **Bootloader & Firmware (G4):** UEFI Limine v2 bootloader with hybrid ISO creation (`dist/chef-os.iso`).
+  - **Kernel Core (G5):** Higher-half 64-bit kernel entry (`0xffffffff80100070`), GDT & 64-bit TSS, IDT (256 vectors with exception & IRQ handlers), PIC remapping, Bitmap PMM (2016 MB detected, 1991 MB free), 4-Level VMM with 2MB large page HHDM mapping, Slab/Freelist Kernel Heap (`kmalloc`/`kfree`), PS/2 Keyboard Driver, Preemptive Thread Scheduler, and GOP Linear Framebuffer driver rendered in Chef Cream (`#F1EBDD`).
+- **Visual Evidence:** Framebuffer boot screenshot captured and verified at `dist/chef-os-boot-full.png`.
+- **Next Task:** Gate G6 — Syscall ABI & User/Kernel Transition.

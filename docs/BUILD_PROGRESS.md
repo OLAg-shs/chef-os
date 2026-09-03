@@ -1,8 +1,8 @@
 # Chef OS Build Progress
 
 ## Current Gate Status
-- **Current Active Gate:** `G3 — Reproducible Cross-Toolchain & Build System`
-- **Previous Gate:** `G2 — Architecture Discovery & Decisions Frozen` (STATUS: **GREEN**)
+- **Current Active Gate:** `G6 — Syscall ABI & User/Kernel Transition`
+- **Previous Gate:** `G5 — Kernel Foundation (PMM, VMM, IDT, GDT, Scheduler)` (STATUS: **GREEN**)
 - **Overall Project Status:** IN PROGRESS
 
 ---
@@ -14,10 +14,10 @@
 | **G0** | V7 Preserved & Frozen in `Chef_Carthy` | **GREEN** | `eb3e9c8` (tag `v7-archive`) | 2026-09-03 |
 | **G1** | New Repository Foundation & Isolation | **GREEN** | `cbdfee1` | 2026-09-03 |
 | **G2** | Architecture Discovery & Decisions Frozen | **GREEN** | Current Commit | 2026-09-03 |
-| **G3** | Reproducible Cross-Toolchain & Build System | **IN PROGRESS** | Current Milestone | Pending |
-| **G4** | Bootloader & Firmware Entry Milestone | PENDING | - | - |
-| **G5** | Kernel Foundation (PMM, VMM, Interrupts, Threads) | PENDING | - | - |
-| **G6** | Syscall ABI & User/Kernel Transition | PENDING | - | - |
+| **G3** | Reproducible Cross-Toolchain & Build System | **GREEN** | Current Commit | 2026-09-03 |
+| **G4** | Bootloader & Firmware Entry Milestone | **GREEN** | Current Commit | 2026-09-03 |
+| **G5** | Kernel Foundation (PMM, VMM, Interrupts, Threads) | **GREEN** | Current Commit | 2026-09-03 |
+| **G6** | Syscall ABI & User/Kernel Transition | **IN PROGRESS** | Current Milestone | Pending |
 | **G7** | Hardware Abstraction & Driver Layer | PENDING | - | - |
 | **G8** | Filesystem & Storage Model | PENDING | - | - |
 | **G9** | Init System & Service Manager | PENDING | - | - |

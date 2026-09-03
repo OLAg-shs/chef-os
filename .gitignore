@@ -22,3 +22,4 @@ toolchain/sysroot/
 *~
 .idea/
 .vscode/
+qemu_serial.log
