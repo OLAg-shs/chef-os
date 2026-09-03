@@ -62,3 +62,13 @@
   - **VFS Verification:** Verified directory hierarchy (`/bin`, `/dev`, `/etc`, `/home`), creation of `/etc/os-release`, and successful read of OS release information through VFS descriptors.
 - **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/vfs_storage_milestone.png`.
 - **Next Task:** Gate G9 — Init System & Service Manager.
+
+## [2026-09-03T02:26:00Z] Gates G9 and G10 Completed (Init Supervisor & Core Shell)
+- **Status:** Gates G9 and G10 **GREEN**.
+- **Completed Subsystems:**
+  - **Process Model (`proc/process.c`):** Process tracking table, process states (`READY`, `RUNNING`, `SLEEPING`, `ZOMBIE`), and process enumeration (`process_list`).
+  - **PID 1 Init Supervisor (`proc/init.c`):** Service supervisor managing core system daemons (`klogd` PID 2, `compositor` PID 3, `chef-sh` PID 4).
+  - **Chef Userland Shell (`user/shell.c`):** Interactive `chef-sh` terminal prompt supporting built-in commands (`help`, `uname`, `clear`, `ls`, `cat`, `ps`, `services`, `mem`, `date`, `echo`, `reboot`, `poweroff`).
+  - **Automated Verification:** Verified execution of `uname`, `services`, and `cat /etc/os-release` directly inside the Chef Cream console window.
+- **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/init_shell_milestone.png`.
+- **Next Task:** Gate G11 — Native Display Server & Compositor Architecture.

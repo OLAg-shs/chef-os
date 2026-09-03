@@ -19,6 +19,9 @@
 #include "fs/ramfs.h"
 #include "fs/devfs.h"
 #include "proc/sched.h"
+#include "proc/process.h"
+#include "proc/init.h"
+#include "user/shell.h"
 #include "sys/syscall.h"
 
 // Limine Requests
@@ -157,29 +160,45 @@ void kmain(void) {
         kprintf("[+] Verified VFS Read on /etc/os-release [ OK ]\n");
     }
 
-    // 10. Initialize Thread Scheduler
+    // 10. Initialize Process Model & PID 1 Init System
+    kprintf("[+] Initializing Process Subsystem & PID 1 Init Supervisor... ");
+    process_init();
+    init_system_boot();
+    kprintf("[ OK ]\n");
+
+    // 11. Initialize Thread Scheduler
     kprintf("[+] Initializing Preemptive Thread Scheduler... ");
     sched_init();
     kprintf("[ OK ]\n");
 
-    // 11. Enable Hardware Interrupts
+    // 12. Enable Hardware Interrupts
     kprintf("[+] Enabling Hardware Interrupts (STI)... ");
     sti();
     kprintf("[ OK ]\n");
 
-    // 12. Initialize Syscall ABI & MSRs
+    // 13. Initialize Syscall ABI & MSRs
     kprintf("[+] Initializing Syscall ABI (MSR STAR, LSTAR, SFMASK)... ");
     syscall_init(hhdm_offset);
     kprintf("[ OK ]\n\n");
 
     kprintf("------------------------------------------------------\n");
-    kprintf("Chef OS Kernel Foundation & VFS Hierarchy Online.\n");
-    kprintf("Testing Ring 3 User Mode transition & native syscall:\n");
+    kprintf("Chef OS 1.0 Native Micro-Core Online.\n");
+    kprintf("Type 'help' for built-in commands or explore /etc, /dev:\n\n");
 
-    // 13. Switch to Ring 3 User Mode & Execute Syscall Test
-    user_mode_enter_test();
+    // Launch interactive userland shell
+    chef_shell_init();
+
+    // Execute automated smoke test commands in shell to verify responsiveness
+    chef_shell_execute_cmd("uname");
+    chef_shell_execute_cmd("services");
+    chef_shell_execute_cmd("cat /etc/os-release");
+    kprintf("chef-os> ");
 
     while (1) {
+        char c = keyboard_get_last_char();
+        if (c) {
+            chef_shell_handle_char(c);
+        }
         hlt();
     }
 }
