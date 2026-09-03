@@ -31,3 +31,13 @@
   - **Kernel Core (G5):** Higher-half 64-bit kernel entry (`0xffffffff80100070`), GDT & 64-bit TSS, IDT (256 vectors with exception & IRQ handlers), PIC remapping, Bitmap PMM (2016 MB detected, 1991 MB free), 4-Level VMM with 2MB large page HHDM mapping, Slab/Freelist Kernel Heap (`kmalloc`/`kfree`), PS/2 Keyboard Driver, Preemptive Thread Scheduler, and GOP Linear Framebuffer driver rendered in Chef Cream (`#F1EBDD`).
 - **Visual Evidence:** Framebuffer boot screenshot captured and verified at `dist/chef-os-boot-full.png`.
 - **Next Task:** Gate G6 — Syscall ABI & User/Kernel Transition.
+
+## [2026-09-03T02:13:00Z] Gate G6 Completed (Syscall ABI & User/Kernel Transition)
+- **Status:** Gate G6 **GREEN**.
+- **Completed Subsystems:**
+  - **MSR Fast Syscall Setup:** IA32_EFER (SCE bit enabled), IA32_STAR (Kernel CS 0x08 / SS 0x10, User CS 0x20 / SS 0x18), IA32_LSTAR (`syscall_entry_stub`), IA32_SFMASK (RFLAGS clearing).
+  - **Syscall Assembly Dispatcher:** `kernel/src/arch/x86_64/syscall_asm.S` handling user register preservation, kernel stack switching, ABI argument translation, and `o64 sysret` execution.
+  - **Syscall Dispatch Table:** `SYS_EXIT` (#1), `SYS_FORK` (#2), `SYS_READ` (#3), `SYS_WRITE` (#4), `SYS_OPEN` (#5), `SYS_CLOSE` (#6), `SYS_GETPID` (#7), `SYS_YIELD` (#8), `SYS_DRAW_RECT` (#11), `SYS_SWAP_BUFFERS` (#12).
+  - **Ring 3 User Mode Verification:** Allocated and mapped user-space page at `0x400000` (`PTE_USER`), jumped from Ring 0 to Ring 3 via `iretq`, executed native `syscall` instruction in user space, processed `SYS_WRITE` back through kernel, and returned cleanly to user space.
+- **Visual Evidence:** Screen capture verified and saved at `assets/screenshots/syscall_ring3_milestone.png`.
+- **Next Task:** Gate G7 — Hardware Abstraction & Driver Layer.

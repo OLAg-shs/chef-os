@@ -10,6 +10,7 @@
 #include "drivers/serial.h"
 #include "drivers/keyboard.h"
 #include "proc/sched.h"
+#include "sys/syscall.h"
 
 // Limine Requests
 __attribute__((used, section(".requests")))
@@ -107,12 +108,19 @@ void kmain(void) {
     // 10. Enable Hardware Interrupts
     kprintf("[+] Enabling Hardware Interrupts (STI)... ");
     sti();
+    kprintf("[ OK ]\n");
+
+    // 11. Initialize Syscall ABI & MSRs
+    kprintf("[+] Initializing Syscall ABI (MSR STAR, LSTAR, SFMASK)... ");
+    syscall_init(hhdm_offset);
     kprintf("[ OK ]\n\n");
 
     kprintf("------------------------------------------------------\n");
-    kprintf("Chef OS Kernel Foundation Online & Ready.\n");
-    kprintf("Dynamic Workspaces, Vertical Dock & Framebuffer Active.\n");
-    kprintf("Type on keyboard to test input stream:\n\nchef-os> ");
+    kprintf("Chef OS Kernel Foundation & Syscall Layer Online.\n");
+    kprintf("Testing Ring 3 User Mode transition & native syscall:\n");
+
+    // 12. Switch to Ring 3 User Mode & Execute Syscall Test
+    user_mode_enter_test();
 
     while (1) {
         hlt();

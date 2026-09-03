@@ -22,13 +22,13 @@ void gdt_init(void) {
     s_gdt_ptr.limit = (sizeof(gdt_entry_t) * 7) - 1;
     s_gdt_ptr.base  = (uint64_t)&s_gdt;
 
-    gdt_set_gate(0, 0, 0, 0, 0);                // Null descriptor
+    gdt_set_gate(0, 0, 0, 0, 0);                // Null descriptor (0x00)
     gdt_set_gate(1, 0, 0xFFFFF, 0x9A, 0xA0);    // 64-bit Kernel Code (0x08)
     gdt_set_gate(2, 0, 0xFFFFF, 0x92, 0xC0);    // 64-bit Kernel Data (0x10)
-    gdt_set_gate(3, 0, 0xFFFFF, 0xFA, 0xA0);    // 64-bit User Code   (0x18)
-    gdt_set_gate(4, 0, 0xFFFFF, 0xF2, 0xC0);    // 64-bit User Data   (0x20)
+    gdt_set_gate(3, 0, 0xFFFFF, 0xF2, 0xC0);    // 64-bit User Data   (0x18 | 3 = 0x1B)
+    gdt_set_gate(4, 0, 0xFFFFF, 0xFA, 0xA0);    // 64-bit User Code   (0x20 | 3 = 0x23)
 
-    // TSS descriptor (takes 2 entries in 64-bit mode)
+    // TSS descriptor (takes 2 entries in 64-bit mode at 0x28)
     memset(&s_tss, 0, sizeof(tss_t));
     s_tss.iomap_base = sizeof(tss_t);
 
@@ -36,10 +36,13 @@ void gdt_init(void) {
     uint32_t tss_limit = sizeof(tss_t) - 1;
 
     gdt_set_gate(5, tss_base & 0xFFFFFFFF, tss_limit, 0x89, 0x00);
-    // Upper 32 bits of TSS base
     uint32_t *tss_high = (uint32_t *)&s_gdt[6];
     *tss_high = (uint32_t)(tss_base >> 32);
 
     gdt_flush((uint64_t)&s_gdt_ptr);
     tss_flush();
+}
+
+void tss_set_kernel_stack(uint64_t stack) {
+    s_tss.rsp0 = stack;
 }

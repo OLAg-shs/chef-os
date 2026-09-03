@@ -1,8 +1,8 @@
 # Chef OS Build Progress
 
 ## Current Gate Status
-- **Current Active Gate:** `G6 — Syscall ABI & User/Kernel Transition`
-- **Previous Gate:** `G5 — Kernel Foundation (PMM, VMM, IDT, GDT, Scheduler)` (STATUS: **GREEN**)
+- **Current Active Gate:** `G7 — Hardware Abstraction & Driver Layer`
+- **Previous Gate:** `G6 — Syscall ABI & User/Kernel Transition` (STATUS: **GREEN**)
 - **Overall Project Status:** IN PROGRESS
 
 ---
@@ -17,8 +17,8 @@
 | **G3** | Reproducible Cross-Toolchain & Build System | **GREEN** | Current Commit | 2026-09-03 |
 | **G4** | Bootloader & Firmware Entry Milestone | **GREEN** | Current Commit | 2026-09-03 |
 | **G5** | Kernel Foundation (PMM, VMM, Interrupts, Threads) | **GREEN** | Current Commit | 2026-09-03 |
-| **G6** | Syscall ABI & User/Kernel Transition | **IN PROGRESS** | Current Milestone | Pending |
-| **G7** | Hardware Abstraction & Driver Layer | PENDING | - | - |
+| **G6** | Syscall ABI & User/Kernel Transition | **GREEN** | Current Commit | 2026-09-03 |
+| **G7** | Hardware Abstraction & Driver Layer | **IN PROGRESS** | Current Milestone | Pending |
 | **G8** | Filesystem & Storage Model | PENDING | - | - |
 | **G9** | Init System & Service Manager | PENDING | - | - |
 | **G10** | Core Userland & Shell Utilities | PENDING | - | - |
