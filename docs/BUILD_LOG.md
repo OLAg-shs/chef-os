@@ -10,3 +10,9 @@
   - Initialized fresh Git repository with branch `main`.
   - Established persistent governance documentation suite (`MASTER_BUILD_DIRECTIVE.md`, `BUILD_PROGRESS.md`, `DECISIONS.md`, `REQUIREMENTS.md`, `KNOWN_ISSUES.md`, `ARCHITECTURE.md`, `TEST_PLAN.md`, `RECOVERY.md`, `V7_REFERENCE_NOTES.md`).
 - **Result:** Gate G0 GREEN, Gate G1 IN PROGRESS.
+
+## [2026-09-03T01:36:30Z] Gate G1 Completed (Repository Isolated & Pushed)
+- **Status:** Gate G1 GREEN
+- **Remote:** https://github.com/OLAg-shs/chef-os.git
+- **Initial Commit:** `cbdfee1`
+- **Confirmation:** Completely isolated directory, fresh git history, no coupling to `Chef_Carthy`.
